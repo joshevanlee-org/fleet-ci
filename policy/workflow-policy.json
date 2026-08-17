@@ -1,0 +1,9 @@
+{
+  "approvedRunners": [
+    "blacksmith-2vcpu-ubuntu-2404",
+    "blacksmith-4vcpu-ubuntu-2404"
+  ],
+  "defaultBuildRunner": "blacksmith-4vcpu-ubuntu-2404",
+  "defaultDocumentationRunner": "blacksmith-2vcpu-ubuntu-2404",
+  "exceptions": []
+}

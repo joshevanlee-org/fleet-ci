@@ -1,0 +1,10 @@
+{
+  "name": "@joshevanlee-org/fleet-ci",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "test": "node --test scripts/*.test.mjs",
+    "audit": "node scripts/audit-organization.mjs"
+  }
+}
