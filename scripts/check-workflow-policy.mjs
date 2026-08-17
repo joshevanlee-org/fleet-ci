@@ -31,7 +31,7 @@ export function parseWorkflow(content) {
     }
     if (!inJobs) continue;
     if (indentation === 2 && !text.startsWith("-") && /^[^:]+:\s*(?:\{\})?$/.test(text)) {
-      currentJob = { id: text.split(":", 1)[0], runner: null, hasRunner: false };
+      currentJob = { id: text.split(":", 1)[0], runner: null, hasRunner: false, hasUses: false };
       jobs.push(currentJob);
       continue;
     }
@@ -44,6 +44,7 @@ export function parseWorkflow(content) {
       currentJob.runner = unquote(text.slice("runs-on:".length).trim());
       currentJob.hasRunner = true;
     }
+    if (currentJob && indentation >= 4 && text.startsWith("uses:")) currentJob.hasUses = true;
   }
   return { jobs };
 }
@@ -53,6 +54,7 @@ export function inspectWorkflow(workflowName, workflow) {
     return [{ workflow: workflowName, job: "<none>", runner: "<missing>", reason: "workflow has no jobs" }];
   }
   return workflow.jobs.flatMap((job) => {
+    if (job.hasUses) return [];
     if (!job.hasRunner) {
       return [{ workflow: workflowName, job: job.id, runner: "<missing>", reason: "job has no runs-on" }];
     }
@@ -88,3 +90,19 @@ export async function checkRepository(rootDirectory) {
   }
   return findings;
 }
+
+async function main() {
+  const rootArgumentIndex = process.argv.indexOf("--root-directory");
+  const rootDirectory = rootArgumentIndex === -1
+    ? process.cwd()
+    : process.argv[rootArgumentIndex + 1] ?? process.cwd();
+  const findings = await checkRepository(rootDirectory);
+  if (findings.length) {
+    console.error(findings.map(formatFinding).join("\n"));
+    process.exitCode = 1;
+    return;
+  }
+  console.log("Workflow runner policy passed.");
+}
+
+if (process.argv[1]?.endsWith("check-workflow-policy.mjs")) await main();

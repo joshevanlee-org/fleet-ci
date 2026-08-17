@@ -17,4 +17,8 @@ Run the unit tests with `node --test scripts/*.test.mjs`.
 Run the organization audit with `GITHUB_TOKEN=... node scripts/audit-organization.mjs`.
 The audit uses the workflow's built-in `GITHUB_TOKEN` and does not print credentials.
 
+Repositories should add a thin caller workflow using
+`joshevanlee-org/fleet-ci/.github/workflows/check.yml@main` and pin that reference
+to a release SHA before making the check required in branch protection.
+
 Repositories keep their own triggers, commands, path filters, deployment environments, and secrets. This repository owns only the fleet runner policy and audit.

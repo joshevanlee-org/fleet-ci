@@ -14,3 +14,10 @@ test("rejects hosted, dynamic, and missing runners", () => {
   assert.equal(findings.length, 3);
   assert.match(findings.map((finding) => finding.job).join(","), /hosted,dynamic,missing/);
 });
+
+test("accepts a reusable-workflow caller job", () => {
+  const findings = inspectWorkflow("fleet-policy.yml", parseWorkflow(
+    "jobs:\n  policy:\n    uses: joshevanlee-org/fleet-ci/.github/workflows/check.yml@main\n",
+  ));
+  assert.deepEqual(findings, []);
+});
